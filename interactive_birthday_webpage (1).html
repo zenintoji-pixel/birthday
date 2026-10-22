@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Ashu!</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #2a0845 50%, #1e1b4b 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+        }
+
+        .font-fredoka {
+            font-family: 'Fredoka One', cursive;
+        }
+        
+        .font-serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Precise Cake & Candles Container */
+        .cake-stage {
+            position: relative;
+            width: 320px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-top: 50px; /* Allocate exact space for attached candles above top tier */
+        }
+
+        /* Cake Plate */
+        .cake-plate {
+            width: 330px;
+            height: 24px;
+            background: linear-gradient(to right, #cbd5e1, #ffffff, #94a3b8);
+            border-radius: 50%;
+            box-shadow: 0 12px 20px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.9);
+            margin-top: -6px;
+            z-index: 1;
+        }
+
+        /* Bottom Tier - Rich Red Velvet */
+        .cake-bottom-tier {
+            position: relative;
+            width: 270px;
+            height: 80px;
+            background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 50%, #450a0a 100%);
+            border-radius: 16px 16px 8px 8px;
+            box-shadow: inset 0 -8px 0 rgba(0,0,0,0.3), 0 8px 18px rgba(0,0,0,0.4);
+            z-index: 2;
+            border-bottom: 4px solid #ef4444;
+        }
+
+        /* Middle Tier - Creamy Vanilla / Caramel */
+        .cake-middle-tier {
+            position: relative;
+            width: 210px;
+            height: 70px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde047 50%, #d97706 100%);
+            border-radius: 14px 14px 6px 6px;
+            box-shadow: inset 0 -6px 0 rgba(0,0,0,0.25), 0 6px 14px rgba(0,0,0,0.3);
+            z-index: 3;
+            margin-bottom: -6px;
+            border-bottom: 4px solid #fef08a;
+        }
+
+        /* Top Tier - Warm Dark Chocolate */
+        .cake-top-tier {
+            position: relative;
+            width: 150px;
+            height: 60px;
+            background: linear-gradient(135deg, #451a03 0%, #292524 50%, #1c1917 100%);
+            border-radius: 12px 12px 4px 4px;
+            box-shadow: inset 0 -5px 0 rgba(0,0,0,0.25), 0 5px 10px rgba(0,0,0,0.3);
+            z-index: 4;
+            margin-bottom: -6px;
+            border-bottom: 4px solid #78350f;
+        }
+
+        /* White Cream Frosting Drops */
+        .frosting-drip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 18px;
+            background: #ffffff;
+            border-radius: 12px 12px 10px 10px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+            opacity: 0.95;
+            z-index: 5;
+        }
+
+        .frosting-drip::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: radial-gradient(circle at 8px 0, #ffffff 8px, transparent 9px);
+            background-size: 16px 16px;
+        }
+
+        /* Decorative Sprinkles */
+        .sprinkles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(#38bdf8 20%, transparent 20%),
+                radial-gradient(#f43f5e 20%, transparent 20%),
+                radial-gradient(#fbbf24 20%, transparent 20%),
+                radial-gradient(#a855f7 20%, transparent 20%);
+            background-size: 20px 20px;
+            background-position: 0 0, 5px 10px, 10px 5px, 15px 15px;
+            opacity: 0.75;
+            z-index: 6;
+        }
+
+        /* Candle Row anchored directly on top of Top Tier */
+        .candles-row {
+            position: absolute;
+            top: 8px; /* Positioned directly on the surface of top cake tier */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            z-index: 10;
+        }
+
+        .candle {
+            position: relative;
+            width: 10px;
+            height: 38px;
+            background: repeating-linear-gradient(45deg, #ec4899, #ec4899 5px, #ffffff 5px, #ffffff 10px);
+            border-radius: 3px 3px 1px 1px;
+            box-shadow: 0 0 8px rgba(236, 72, 153, 0.4), inset -1px 0 2px rgba(0,0,0,0.3);
+        }
+
+        .wick {
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 6px;
+            background-color: #1e293b;
+        }
+
+        /* Glowing Flame mounted on wick */
+        .flame {
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 24px;
+            background: radial-gradient(ellipse at bottom, #ffffff 0%, #fef08a 25%, #f97316 60%, #dc2626 100%);
+            border-radius: 50% 50% 35% 35%;
+            filter: drop-shadow(0 0 10px #f97316) drop-shadow(0 0 20px #f59e0b);
+            animation: flameFlicker 0.12s infinite alternate ease-in-out;
+            transform-origin: center bottom;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        .flame.extinguished {
+            opacity: 0 !important;
+            transform: translateX(-50%) scale(0.1) !important;
+        }
+
+        .smoke {
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 18px;
+            background: rgba(226, 232, 240, 0.7);
+            border-radius: 50%;
+            filter: blur(4px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .flame.extinguished + .smoke {
+            animation: riseSmoke 1.5s ease-out forwards;
+        }
+
+        @keyframes flameFlicker {
+            0% { transform: translateX(-50%) scale(1) rotate(-3deg); filter: drop-shadow(0 0 8px #f97316) drop-shadow(0 0 16px #fbbf24); }
+            100% { transform: translateX(-50%) scale(1.15) rotate(3deg); filter: drop-shadow(0 0 14px #f97316) drop-shadow(0 0 25px #f59e0b); }
+        }
+
+        @keyframes riseSmoke {
+            0% { opacity: 0.85; transform: translateX(-50%) translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-35px) scale(2.2); }
+        }
+
+        /* Ambient Cake Light Glow */
+        .cake-ambient-glow {
+            position: absolute;
+            top: 10px;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.3) 0%, rgba(249, 115, 22, 0.12) 50%, transparent 75%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .cake-ambient-glow.dim {
+            opacity: 0.05;
+        }
+
+        /* Floating Balloons Background */
+        .balloon {
+            position: fixed;
+            bottom: -120px;
+            width: 55px;
+            height: 70px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            opacity: 0.8;
+            z-index: 0;
+            pointer-events: none;
+            animation: floatUp 10s linear infinite;
+        }
+
+        .balloon::after {
+            content: "";
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(-115vh) rotate(25deg); opacity: 0; }
+        }
+
+        /* Photo Card Style */
+        .photo-card {
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .photo-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 30px -10px rgba(236, 72, 153, 0.5);
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-start min-h-screen relative overflow-x-hidden">
+
+    <!-- Background Floating Balloons -->
+    <div id="balloonContainer" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- Main Container -->
+    <div class="max-w-5xl w-full glass-card rounded-3xl p-6 sm:p-10 relative z-10 my-auto my-6">
+        
+        <!-- Header Banner -->
+        <header class="text-center mb-8">
+            <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-pink-500/20 to-purple-500/20 text-pink-300 border border-pink-500/30 rounded-full text-xs sm:text-sm font-bold tracking-wider uppercase mb-3 shadow-inner">
+                <i class="fa-solid fa-sparkles text-amber-400"></i> Birthday Celebration for Ashu <i class="fa-solid fa-sparkles text-amber-400"></i>
+            </span>
+            <h1 id="displayName" class="text-4xl sm:text-6xl font-fredoka text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-300 to-indigo-300 drop-shadow-md leading-tight">
+                Happy Birthday, Ashu! 🎂
+            </h1>
+            <p class="text-slate-300 font-medium mt-2 text-base sm:text-lg max-w-xl mx-auto">
+                Blow into your microphone or tap blow to extinguish the candles on Ashu's cake! ✨
+            </p>
+        </header>
+
+        <!-- Redesigned Birthday Cake & Candle Interactive Section -->
+        <section class="flex flex-col items-center justify-center my-6 bg-slate-900/80 p-6 sm:p-8 rounded-3xl border border-pink-500/30 relative overflow-hidden shadow-2xl">
+            
+            <!-- Ambient Lighting Glow -->
+            <div id="cakeGlow" class="cake-ambient-glow"></div>
+
+            <!-- Sensitivity & Live Blow Gauge Control Bar -->
+            <div class="w-full max-w-md mb-8 z-10 bg-slate-800/90 p-4 rounded-2xl border border-slate-700 shadow-inner">
+                
+                <!-- Live Level Meter -->
+                <div class="flex justify-between items-center text-xs font-bold text-slate-300 mb-1.5">
+                    <span class="flex items-center gap-1.5 text-pink-400">
+                        <i class="fa-solid fa-microphone-lines text-sm animate-pulse"></i> Blow Volume Level
+                    </span>
+                    <span id="blowLevelText" class="text-amber-300 font-mono text-sm">0%</span>
+                </div>
+                <div class="w-full bg-slate-950 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-700 shadow-inner mb-4">
+                    <div id="blowBar" class="bg-gradient-to-r from-teal-400 via-amber-400 to-pink-500 h-full w-0 transition-all duration-75 rounded-full shadow-lg"></div>
+                </div>
+
+                <!-- Adjustable Sensitivity Slider -->
+                <div class="flex flex-col gap-1">
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-300">
+                        <label for="sensitivitySlider" class="flex items-center gap-1.5 text-indigo-300">
+                            <i class="fa-solid fa-sliders"></i> Mic Sensitivity Boost
+                        </label>
+                        <span id="sensitivityValText" class="text-indigo-400 font-mono">High (3x Boost)</span>
+                    </div>
+                    <input type="range" id="sensitivitySlider" min="1" max="5" step="0.5" value="3" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-pink-500">
+                    <p id="micStatus" class="text-xs text-slate-400 mt-1 font-medium text-center">Click "Enable Microphone" below to start</p>
+                </div>
+            </div>
+
+            <!-- Redesigned Cake Stage: Candles are attached directly on top of Tier 1 -->
+            <div class="cake-stage mb-4">
+
+                <!-- Top Tier (Dark Chocolate) -->
+                <div class="cake-top-tier">
+                    <!-- Candles anchored seamlessly on top tier surface -->
+                    <div class="candles-row" id="candlesContainer">
+                        <div class="candle"><div class="wick"></div><div class="flame"></div><div class="smoke"></div></div>
+                        <div class="candle"><div class="wick"></div><div class="flame"></div><div class="smoke"></div></div>
+                        <div class="candle"><div class="wick"></div><div class="flame"></div><div class="smoke"></div></div>
+                        <div class="candle"><div class="wick"></div><div class="flame"></div><div class="smoke"></div></div>
+                        <div class="candle"><div class="wick"></div><div class="flame"></div><div class="smoke"></div></div>
+                    </div>
+                    <div class="frosting-drip"></div>
+                    <div class="sprinkles"></div>
+                </div>
+
+                <!-- Middle Tier (Vanilla Caramel) -->
+                <div class="cake-middle-tier">
+                    <div class="frosting-drip"></div>
+                    <div class="sprinkles"></div>
+                </div>
+
+                <!-- Bottom Tier (Red Velvet) -->
+                <div class="cake-bottom-tier">
+                    <div class="frosting-drip"></div>
+                    <div class="sprinkles"></div>
+                </div>
+
+                <!-- Base Plate -->
+                <div class="cake-plate"></div>
+            </div>
+
+            <!-- Interactive Action Buttons -->
+            <div class="flex flex-wrap gap-3 justify-center items-center mt-4 z-20">
+                <button id="micBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition flex items-center gap-2 active:scale-95 text-sm border border-indigo-400/30">
+                    <i class="fa-solid fa-microphone"></i> Enable Microphone
+                </button>
+                <button id="relightBtn" class="bg-pink-600 hover:bg-pink-500 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition flex items-center gap-2 active:scale-95 text-sm border border-pink-400/30">
+                    <i class="fa-solid fa-fire-flame-curved"></i> Relight Candles
+                </button>
+                <button id="manualBlowBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-100 font-bold py-3 px-6 rounded-2xl shadow-lg transition flex items-center gap-2 active:scale-95 text-sm border border-slate-500/30">
+                    <i class="fa-solid fa-wind"></i> Tap to Blow
+                </button>
+            </div>
+        </section>
+
+        <!-- 6 Selected Photos Grid Gallery -->
+        <section class="my-10">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-2 font-serif-title">
+                    <i class="fa-solid fa-camera-retro text-pink-400"></i> Ashu's Photo Gallery
+                </h2>
+                <label class="cursor-pointer bg-pink-600/80 hover:bg-pink-600 text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl transition duration-200 shadow-md flex items-center gap-2 border border-pink-400/30">
+                    <i class="fa-solid fa-upload"></i> Change Photos
+                    <input type="file" id="photoInput" accept="image/*" multiple class="hidden">
+                </label>
+            </div>
+
+            <!-- Grid displaying 6 photos of Ashu -->
+            <div id="photoGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
+                <div class="photo-card bg-slate-800/90 p-3 rounded-2xl border border-pink-500/20 text-center shadow-lg">
+                    <div class="overflow-hidden rounded-xl aspect-[3/4] mb-3 bg-slate-950 relative">
+                        <img src="input_file_0.png" alt="Ashu Photo 1" class="w-full h-full object-cover">
+                    </div>
+                    <p class="text-xs font-bold text-pink-300 tracking-wide uppercase">Radiant Smile ☀️</p>
+                </div>
+                <div class="photo-card bg-slate-800/90 p-3 rounded-2xl border border-pink-500/20 text-center shadow-lg">
+                    <div class="overflow-hidden rounded-xl aspect-[3/4] mb-3 bg-slate-950 relative">
+                        <img src="input_file_1.png" alt="Ashu Photo 2" class="w-full h-full object-cover">
+                    </div>
+                    <p class="text-xs font-bold text-purple-300 tracking-wide uppercase">Chic Vibes ✨</p>
+                </div>
+                <div class="photo-card bg-slate-800/90 p-3 rounded-2xl border border-pink-500/20 text-center shadow-lg">
+                    <div class="overflow-hidden rounded-xl aspect-[3/4] mb-3 bg-slate-950 relative">
+                        <img src="input_file_2.png" alt="Ashu Photo 3" class="w-full h-full object-cover">
+                    </div>
+                    <p class="text-xs font-bold text-indigo-300 tracking-wide uppercase">Lovely Moments 💖</p>
+                </div>
+                <div class="photo-card bg-slate-800/90 p-3 rounded-2xl border border-pink-500/20 text-center shadow-lg">
+                    <div class="overflow-hidden rounded-xl aspect-[3/4] mb-3 bg-slate-950 relative">
+                        <img src="input_file_3.png" alt="Ashu Photo 4" class="w-full h-full object-cover">
+                    </div>
+                    <p class="text-xs font-bold text-amber-300 tracking-wide uppercase">Stylish pose 🕷️</p>
+                </div>
+                <div class="photo-card bg-slate-800/90 p-3 rounded-2xl border border-pink-500/20 text-center shadow-lg">
+                    <div class="overflow-hidden rounded-xl aspect-[3/4] mb-3 bg-slate-950 relative">
+                        <img src="input_file_4.png" alt="Ashu Photo 5" class="w-full h-full object-cover">
+                    </div>
+                    <p class="text-xs font-bold text-teal-300 tracking-wide uppercase">Golden Glow 🌟</p>
+                </div>
+                <div class="photo-card bg-slate-800/90 p-3 rounded-2xl border border-pink-500/20 text-center shadow-lg">
+                    <div class="overflow-hidden rounded-xl aspect-[3/4] mb-3 bg-slate-950 relative">
+                        <img src="input_file_5.png" alt="Ashu Photo 6" class="w-full h-full object-cover">
+                    </div>
+                    <p class="text-xs font-bold text-rose-300 tracking-wide uppercase">Ethnic Elegance 🥻</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Custom Greeting & Wish Message Box -->
+        <section class="mt-8 bg-slate-900/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl">
+            <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2 font-serif-title">
+                <i class="fa-solid fa-heart text-pink-500"></i> Birthday Wish Card for Ashu
+            </h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">BIRTHDAY PERSON NAME</label>
+                    <input type="text" id="nameInput" value="Ashu" class="w-full sm:w-1/2 p-3 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-semibold text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">YOUR SPECIAL WISHES</label>
+                    <textarea id="messageInput" rows="3" class="w-full p-3.5 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 text-slate-200 font-medium leading-relaxed">Happy Birthday Ashu! 🎂✨ May your special day bring you as much joy, warmth, and laughter as you bring to everyone around you! Wishing you a brilliant year ahead filled with happiness and success! 🎉💖</textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Audio Music Footer Bar -->
+        <footer class="mt-8 text-center text-xs text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-3 pt-6 border-t border-slate-800">
+            <button id="toggleMusicBtn" class="bg-pink-500/20 hover:bg-pink-500/30 text-pink-300 border border-pink-500/30 font-bold py-2 px-4 rounded-xl flex items-center gap-2 transition">
+                <i class="fa-solid fa-music"></i> Play Happy Birthday Tune
+            </button>
+            <p class="font-medium">Designed with ❤️ for Ashu's Birthday Celebration</p>
+        </footer>
+    </div>
+
+    <!-- Notification Toast Modal -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 border border-slate-700 text-white px-5 py-3 rounded-2xl shadow-2xl transition-all duration-300 opacity-0 transform translate-y-10 pointer-events-none flex items-center gap-3 z-50">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-green-400 text-lg"></i>
+        <span id="toastMsg" class="text-sm font-semibold">Message here</span>
+    </div>
+
+    <!-- Web Audio & App Controls Logic -->
+    <script>
+        // Core Audio & Detection Variables
+        let audioCtx = null;
+        let analyser = null;
+        let gainNode = null;
+        let microphoneStream = null;
+        let isMicActive = false;
+        let isMusicPlaying = false;
+        let blownOutCount = 0;
+        const totalCandles = 5;
+
+        // Visual Elements
+        const flames = document.querySelectorAll('.flame');
+        const blowBar = document.getElementById('blowBar');
+        const blowLevelText = document.getElementById('blowLevelText');
+        const micStatus = document.getElementById('micStatus');
+        const micBtn = document.getElementById('micBtn');
+        const relightBtn = document.getElementById('relightBtn');
+        const manualBlowBtn = document.getElementById('manualBlowBtn');
+        const photoInput = document.getElementById('photoInput');
+        const photoGrid = document.getElementById('photoGrid');
+        const nameInput = document.getElementById('nameInput');
+        const displayName = document.getElementById('displayName');
+        const toggleMusicBtn = document.getElementById('toggleMusicBtn');
+        const cakeGlow = document.getElementById('cakeGlow');
+
+        // Sensitivity Control Elements
+        const sensitivitySlider = document.getElementById('sensitivitySlider');
+        const sensitivityValText = document.getElementById('sensitivityValText');
+
+        // Sensitivity Multiplier mapping
+        sensitivitySlider.addEventListener('input', (e) => {
+            const mult = parseFloat(e.target.value);
+            if (gainNode) {
+                gainNode.gain.setValueAtTime(mult, audioCtx.currentTime);
+            }
+            let label = "Normal (1x)";
+            if (mult >= 2 && mult < 4) label = `High (${mult}x Boost)`;
+            if (mult >= 4) label = `Ultra Sensitive (${mult}x Boost)`;
+            sensitivityValText.innerText = label;
+        });
+
+        // Toast Notification System
+        function showToast(message, iconClass = 'fa-solid fa-circle-check text-green-400') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = message;
+            toastIcon.className = iconClass;
+            toast.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+            }, 3000);
+        }
+
+        // Floating Balloons Setup
+        function createBalloons() {
+            const container = document.getElementById('balloonContainer');
+            const colors = ['#ec4899', '#38bdf8', '#fbbf24', '#a855f7', '#4ade80'];
+            
+            for (let i = 0; i < 16; i++) {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                balloon.style.left = `${Math.random() * 100}%`;
+                balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                balloon.style.animationDelay = `${Math.random() * 8}s`;
+                balloon.style.animationDuration = `${8 + Math.random() * 8}s`;
+                container.appendChild(balloon);
+            }
+        }
+
+        // Dynamic Name Header Sync
+        nameInput.addEventListener('input', (e) => {
+            const val = e.target.value.trim();
+            displayName.innerText = val ? `Happy Birthday, ${val}! 🎂` : 'Happy Birthday! 🎂';
+        });
+
+        // Custom Photo Upload Listener
+        photoInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files.length > 0) {
+                photoGrid.innerHTML = '';
+                Array.from(files).slice(0, 6).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const card = document.createElement('div');
+                        card.className = 'photo-card bg-slate-800/90 p-3 rounded-2xl border border-pink-500/20 text-center shadow-lg';
+                        card.innerHTML = `
+                            <div class="overflow-hidden rounded-xl aspect-[3/4] mb-3 bg-slate-950 relative">
+                                <img src="${event.target.result}" alt="Ashu Photo ${index + 1}" class="w-full h-full object-cover">
+                            </div>
+                            <p class="text-xs font-bold text-pink-300 tracking-wide uppercase">Memory #${index + 1}</p>
+                        `;
+                        photoGrid.appendChild(card);
+                    };
+                    reader.readAsDataURL(file);
+                });
+                showToast('Gallery updated with 6 custom photos! 📸');
+            }
+        });
+
+        // Synthesize Melody Notes
+        function playTone(freq, duration, type = 'sine', delay = 0) {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            setTimeout(() => {
+                try {
+                    const osc = audioCtx.createOscillator();
+                    const toneGain = audioCtx.createGain();
+
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                    toneGain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    toneGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration - 0.05);
+
+                    osc.connect(toneGain);
+                    toneGain.connect(audioCtx.destination);
+
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + duration);
+                } catch(e) {}
+            }, delay);
+        }
+
+        // Play Synthesized Birthday Melody
+        function playBirthdaySong() {
+            if (isMusicPlaying) return;
+            isMusicPlaying = true;
+            toggleMusicBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Playing Melody...';
+
+            const notes = [
+                { f: 264, d: 0.4 }, { f: 264, d: 0.4 }, { f: 297, d: 0.8 }, { f: 264, d: 0.8 }, { f: 352, d: 0.8 }, { f: 330, d: 1.2 },
+                { f: 264, d: 0.4 }, { f: 264, d: 0.4 }, { f: 297, d: 0.8 }, { f: 264, d: 0.8 }, { f: 396, d: 0.8 }, { f: 352, d: 1.2 },
+                { f: 264, d: 0.4 }, { f: 264, d: 0.4 }, { f: 528, d: 0.8 }, { f: 440, d: 0.8 }, { f: 352, d: 0.8 }, { f: 330, d: 0.8 }, { f: 297, d: 0.8 },
+                { f: 466, d: 0.4 }, { f: 466, d: 0.4 }, { f: 440, d: 0.8 }, { f: 352, d: 0.8 }, { f: 396, d: 0.8 }, { f: 352, d: 1.5 }
+            ];
+
+            let cumulativeDelay = 0;
+            notes.forEach((note) => {
+                playTone(note.f, note.d, 'triangle', cumulativeDelay);
+                cumulativeDelay += note.d * 1000;
+            });
+
+            setTimeout(() => {
+                isMusicPlaying = false;
+                toggleMusicBtn.innerHTML = '<i class="fa-solid fa-music"></i> Play Happy Birthday Tune';
+            }, cumulativeDelay);
+        }
+
+        toggleMusicBtn.addEventListener('click', playBirthdaySong);
+
+        // Confetti Burst Trigger
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 140,
+                    spread: 90,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        // Extinguish Candles Logic
+        function blowOutCandles() {
+            if (blownOutCount >= totalCandles) return;
+
+            flames.forEach((flame, index) => {
+                if (!flame.classList.contains('extinguished')) {
+                    setTimeout(() => {
+                        flame.classList.add('extinguished');
+                        blownOutCount++;
+
+                        playTone(130, 0.2, 'sawtooth');
+
+                        if (blownOutCount === totalCandles) {
+                            cakeGlow.classList.add('dim');
+                            micStatus.innerText = "🎉 Yay! All candles blown out for Ashu!";
+                            showToast("Wish made! Candles extinguished! 🎉", "fa-solid fa-cake-candles text-pink-400");
+                            triggerConfetti();
+                            playBirthdaySong();
+                        }
+                    }, index * 100);
+                }
+            });
+        }
+
+        // Relight Candles Logic
+        function relightCandles() {
+            flames.forEach((flame) => {
+                flame.classList.remove('extinguished');
+            });
+            blownOutCount = 0;
+            cakeGlow.classList.remove('dim');
+            micStatus.innerText = isMicActive ? "Microphone listening... Blow to extinguish!" : "Click 'Enable Microphone' below to begin";
+            showToast("Candles relit! Make a new wish 🕯️");
+        }
+
+        relightBtn.addEventListener('click', relightCandles);
+        manualBlowBtn.addEventListener('click', blowOutCandles);
+
+        // Enhanced Microphone Blow Detection with Amplification
+        async function initMicrophone() {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+                microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                
+                const source = audioCtx.createMediaStreamSource(microphoneStream);
+                
+                // Gain node amplifies mic sensitivity
+                gainNode = audioCtx.createGain();
+                gainNode.gain.setValueAtTime(parseFloat(sensitivitySlider.value), audioCtx.currentTime);
+
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+
+                // Audio Pipeline: Mic Source -> Gain Amplification -> Frequency Analyser
+                source.connect(gainNode);
+                gainNode.connect(analyser);
+
+                isMicActive = true;
+                micBtn.classList.replace('bg-indigo-600', 'bg-emerald-600');
+                micBtn.classList.replace('hover:bg-indigo-500', 'hover:bg-emerald-500');
+                micBtn.innerHTML = '<i class="fa-solid fa-microphone-lines"></i> Mic Active';
+                micStatus.innerText = "Listening... Gently blow onto your microphone!";
+                showToast("Microphone active! Blow onto mic 🌬️");
+
+                detectBlow();
+            } catch (err) {
+                console.error("Microphone Access Error:", err);
+                micStatus.innerText = "Mic access blocked. Use 'Tap to Blow' button.";
+                showToast("Microphone access unavailable", "fa-solid fa-triangle-exclamation text-amber-400");
+            }
+        }
+
+        function detectBlow() {
+            if (!isMicActive || !analyser) return;
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyser.getByteFrequencyData(dataArray);
+
+            // Compute energy across low audio frequencies (wind/blowing sound)
+            let sum = 0;
+            for (let i = 0; i < 20; i++) {
+                sum += dataArray[i];
+            }
+            const averageLowFreq = sum / 20;
+
+            // Scaled blow detection percentage display
+            const percentage = Math.min(100, Math.round((averageLowFreq / 100) * 100));
+            blowBar.style.width = `${percentage}%`;
+            blowLevelText.innerText = `${percentage}%`;
+
+            // Sensitivity Trigger Threshold (Lower threshold = highly sensitive)
+            const BLOW_THRESHOLD = 30;
+
+            if (averageLowFreq > BLOW_THRESHOLD && blownOutCount < totalCandles) {
+                blowOutCandles();
+            }
+
+            requestAnimationFrame(detectBlow);
+        }
+
+        micBtn.addEventListener('click', () => {
+            if (!isMicActive) {
+                initMicrophone();
+            } else {
+                showToast("Microphone is active! Blow onto mic.");
+            }
+        });
+
+        // Initialize Background Elements on Page Load
+        window.onload = function() {
+            createBalloons();
+        };
+    </script>
+</body>
+</html>
