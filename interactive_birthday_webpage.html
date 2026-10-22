@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Happy Birthday Ashu! 🎉</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background: linear-gradient(135deg, #1f082e 0%, #3a0d52 50%, #1a0628 100%);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Floating Background Elements */
+    .bg-balloon {
+      position: fixed;
+      bottom: -100px;
+      width: 45px;
+      height: 60px;
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      opacity: 0.25;
+      z-index: 0;
+      pointer-events: none;
+      animation: floatUp 14s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.2; }
+      100% { transform: translateY(-120vh) rotate(20deg); opacity: 0; }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2.8rem, 8vw, 4.2rem);
+      background: linear-gradient(45deg, #ff71ce, #01cdfe, #05ffa1, #fffb96);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(255, 113, 206, 0.4);
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 3.5vw, 1.25rem);
+      color: #ffd166;
+      font-weight: 600;
+      margin-top: -5px;
+    }
+
+    /* Interactive Blow Section */
+    .blow-section {
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 18px 15px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .mic-status {
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #ff007f, #7928ca);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 0, 127, 0.4);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: none;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      margin-top: 10px;
+    }
+
+    /* Input Sensitivity Controls */
+    .controls-panel {
+      margin-top: 12px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 10px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+
+    .slider-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .slider-group input {
+      flex: 1;
+      accent-color: #ff007f;
+    }
+
+    .volume-meter {
+      width: 100%;
+      height: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .volume-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #05ffa1, #fffb96, #ff007f);
+      transition: width 0.05s ease;
+    }
+
+    /* ------------------------------------
+       THE CAKE & CANDLE SCENE 
+    ------------------------------------ */
+    .cake-container {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      margin: 10px 0 20px 0;
+    }
+
+    .cake {
+      position: relative;
+      width: 250px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Cake Tiers */
+    .tier {
+      border-radius: 12px 12px 18px 18px;
+      position: relative;
+      box-shadow: 0 8px 0 rgba(0,0,0,0.2), inset 0 6px 12px rgba(255,255,255,0.3);
+    }
+
+    .tier-top {
+      width: 150px;
+      height: 60px;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      z-index: 3;
+    }
+
+    .tier-middle {
+      width: 200px;
+      height: 70px;
+      background: linear-gradient(to right, #f72585, #7209b7);
+      margin-top: -8px;
+      z-index: 2;
+    }
+
+    .tier-bottom {
+      width: 250px;
+      height: 80px;
+      background: linear-gradient(to right, #480ca8, #3a0ca3);
+      margin-top: -8px;
+      z-index: 1;
+    }
+
+    /* Frosting Decor */
+    .frosting {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 18px;
+      background: #ffffff;
+      border-radius: 12px 12px 10px 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+
+    .frosting-drips {
+      position: absolute;
+      top: 15px;
+      left: 0;
+      width: 100%;
+      height: 12px;
+      background: radial-gradient(circle at 10px 0, #ffffff 12px, transparent 13px) repeat-x;
+      background-size: 20px 20px;
+    }
+
+    .plate {
+      width: 290px;
+      height: 16px;
+      background: #e0e0e0;
+      background: linear-gradient(to right, #d4d4d4, #ffffff, #d4d4d4);
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      z-index: 0;
+      margin-top: -4px;
+    }
+
+    /* Embedded Candles */
+    .candles-row {
+      position: absolute;
+      top: -38px; /* Lowered down into top layer top margin */
+      display: flex;
+      gap: 18px;
+      z-index: 4;
+    }
+
+    .candle {
+      position: relative;
+      width: 12px;
+      height: 48px;
+      background: repeating-linear-gradient(
+        45deg,
+        #ffd166,
+        #ffd166 6px,
+        #06d6a0 6px,
+        #06d6a0 12px
+      );
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    /* Base socket making candle appear stuck inside top layer */
+    .candle-socket {
+      position: absolute;
+      bottom: -4px;
+      left: -2px;
+      width: 16px;
+      height: 8px;
+      background: #ff2a6d;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    .wick {
+      position: absolute;
+      top: -8px;
+      left: 5px;
+      width: 2px;
+      height: 8px;
+      background: #222;
+    }
+
+    /* Candle Flame */
+    .flame {
+      position: absolute;
+      top: -24px;
+      left: -3px;
+      width: 18px;
+      height: 26px;
+      background: radial-gradient(ellipse at bottom, #ffea00 0%, #ff6d00 50%, transparent 80%);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      filter: drop-shadow(0 0 10px #ff9e00) drop-shadow(0 0 20px #ff0055);
+      animation: flicker 0.15s infinite alternate ease-in-out;
+      transform-origin: center bottom;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .flame.off {
+      opacity: 0;
+      transform: scale(0.1);
+      pointer-events: none;
+    }
+
+    .smoke {
+      position: absolute;
+      top: -25px;
+      left: 2px;
+      width: 8px;
+      height: 8px;
+      background: rgba(200, 200, 200, 0.8);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .flame.off + .smoke {
+      animation: puff 1.2s ease-out forwards;
+    }
+
+    @keyframes flicker {
+      0% { transform: scale(1) rotate(-2deg); }
+      100% { transform: scale(1.15) rotate(2deg); }
+    }
+
+    @keyframes puff {
+      0% { opacity: 0.8; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-35px) scale(3); }
+    }
+
+    /* Wish Message Box */
+    .wish-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 20px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .wish-title {
+      color: #ff71ce;
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+
+    .wish-text {
+      font-size: 0.98rem;
+      line-height: 1.5;
+      color: #f1f5f9;
+    }
+
+    /* Photo Gallery (2x3 Mobile Optimized Grid) */
+    .gallery-title {
+      font-size: 1.3rem;
+      color: #ffd166;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+
+    .photo-card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 8px 12px 8px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      transform: rotate(calc(var(--r, 0) * 1deg));
+      transition: transform 0.3s ease;
+    }
+
+    .photo-card:nth-child(1) { --r: -2; }
+    .photo-card:nth-child(2) { --r: 2; }
+    .photo-card:nth-child(3) { --r: 1; }
+    .photo-card:nth-child(4) { --r: -2; }
+    .photo-card:nth-child(5) { --r: -1; }
+    .photo-card:nth-child(6) { --r: 2; }
+
+    .photo-card:hover, .photo-card:active {
+      transform: scale(1.04) rotate(0deg);
+      z-index: 2;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      border-radius: 8px;
+      display: block;
+    }
+
+    .photo-caption {
+      color: #333;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin: 20px 0 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Background Balloons -->
+  <div id="balloon-container"></div>
+
+  <div class="container">
+    <header>
+      <h1 class="title">Happy Birthday Ashu!</h1>
+      <p class="subtitle">✨ Wish you a day filled with joy & laughter ✨</p>
+    </header>
+
+    <!-- Interactive Blow Control -->
+    <div class="blow-section">
+      <div class="mic-status" id="mic-status">
+        🎙️ Tap button below & blow into microphone to blow out candles!
+      </div>
+
+      <button class="btn" id="mic-btn">
+        <span>🎤 Enable Microphone Blow</span>
+      </button>
+
+      <div class="controls-panel">
+        <div class="slider-group">
+          <label for="sensitivity">Blow Sensitivity Intensity:</label>
+          <input type="range" id="sensitivity" min="5" max="80" value="20">
+          <span id="sens-val">High</span>
+        </div>
+        <div class="volume-meter">
+          <div class="volume-bar" id="volume-bar"></div>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" id="relight-btn">🔥 Relight Candles</button>
+    </div>
+
+    <!-- Birthday Cake -->
+    <div class="cake-container">
+      <div class="cake">
+        
+        <!-- Candles embedded on top layer -->
+        <div class="candles-row">
+          <div class="candle">
+            <div class="flame" id="flame-1"></div>
+            <div class="smoke"></div>
+            <div class="wick"></div>
+            <div class="candle-socket"></div>
+          </div>
+          <div class="candle">
+            <div class="flame" id="flame-2"></div>
+            <div class="smoke"></div>
+            <div class="wick"></div>
+            <div class="candle-socket"></div>
+          </div>
+          <div class="candle">
+            <div class="flame" id="flame-3"></div>
+            <div class="smoke"></div>
+            <div class="wick"></div>
+            <div class="candle-socket"></div>
+          </div>
+        </div>
+
+        <!-- Top Layer -->
+        <div class="tier tier-top">
+          <div class="frosting"></div>
+          <div class="frosting-drips"></div>
+        </div>
+
+        <!-- Middle Layer -->
+        <div class="tier tier-middle">
+          <div class="frosting"></div>
+          <div class="frosting-drips"></div>
+        </div>
+
+        <!-- Bottom Layer -->
+        <div class="tier tier-bottom">
+          <div class="frosting"></div>
+          <div class="frosting-drips"></div>
+        </div>
+
+        <div class="plate"></div>
+      </div>
+    </div>
+
+    <!-- Birthday Wish Message Card -->
+    <div class="wish-card">
+      <h2 class="wish-title">Dearest Ashu 💖</h2>
+      <p class="wish-text">
+        May your year ahead be as bright, stylish, and full of beautiful moments as you are! 
+        Keep shining, spreading happiness, and making wonderful memories! 🎂✨🎉
+      </p>
+    </div>
+
+    <!-- 6 Photo Memories Grid -->
+    <h3 class="gallery-title">📸 Wonderful Memories 📸</h3>
+    <div class="photo-grid">
+      <div class="photo-card">
+        <img src="sunlight.jpeg" alt="Ashu Memory 1">
+        <div class="photo-caption">Sunlit Smiles ☀️</div>
+      </div>
+      <div class="photo-card">
+        <img src="chic.jpeg" alt="Ashu Memory 2">
+        <div class="photo-caption">Chic Vibes ✨</div>
+      </div>
+      <div class="photo-card">
+        <img src="radiant.jpeg" alt="Ashu Memory 3">
+        <div class="photo-caption">Radiant Mood 💫</div>
+      </div>
+      <div class="photo-card">
+        <img src="cute.jpeg" alt="Ashu Memory 4">
+        <div class="photo-caption">Cute Moments 🌸</div>
+      </div>
+      <div class="photo-card">
+        <img src="night.jpeg" alt="Ashu Memory 5">
+        <div class="photo-caption">Night Lights 🌟</div>
+      </div>
+      <div class="photo-card">
+        <img src="traditional.jpeg" alt="Ashu Memory 6">
+        <div class="photo-caption">Traditional Elegance 🥻</div>
+      </div>
+    </div>
+
+    <footer>
+      Made with ❤️ for Ashu's Special Day
+    </footer>
+  </div>
+
+  <script>
+    // Create background floating balloons
+    const balloonContainer = document.getElementById('balloon-container');
+    const balloonColors = ['#ff71ce', '#01cdfe', '#05ffa1', '#fffb96', '#b967ff'];
+    
+    for (let i = 0; i < 15; i++) {
+      const balloon = document.createElement('div');
+      balloon.className = 'bg-balloon';
+      balloon.style.left = `${Math.random() * 100}%`;
+      balloon.style.animationDelay = `${Math.random() * 10}s`;
+      balloon.style.animationDuration = `${10 + Math.random() * 8}s`;
+      balloon.style.backgroundColor = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+      balloonContainer.appendChild(balloon);
+    }
+
+    // Candle and Audio Elements
+    const flames = [
+      document.getElementById('flame-1'),
+      document.getElementById('flame-2'),
+      document.getElementById('flame-3')
+    ];
+    
+    const micBtn = document.getElementById('mic-btn');
+    const relightBtn = document.getElementById('relight-btn');
+    const micStatus = document.getElementById('mic-status');
+    const volumeBar = document.getElementById('volume-bar');
+    const sensInput = document.getElementById('sensitivity');
+    const sensValLabel = document.getElementById('sens-val');
+
+    let audioContext;
+    let analyser;
+    let microphone;
+    let gainNode;
+    let isListening = false;
+    let candlesBlown = false;
+
+    // Update Sensitivity Label
+    sensInput.addEventListener('input', () => {
+      const val = parseInt(sensInput.value);
+      if (val <= 15) sensValLabel.textContent = "Very High";
+      else if (val <= 30) sensValLabel.textContent = "High";
+      else if (val <= 50) sensValLabel.textContent = "Medium";
+      else sensValLabel.textContent = "Low";
+    });
+
+    // Toggle Microphone Detection
+    micBtn.addEventListener('click', async () => {
+      if (isListening) return;
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        microphone = audioContext.createMediaStreamSource(stream);
+        analyser = audioContext.createAnalyser();
+        gainNode = audioContext.createGain();
+
+        // Amplify input signal by 2.5x to increase blow sensitivity
+        gainNode.gain.value = 2.5;
+
+        analyser.fftSize = 256;
+        microphone.connect(gainNode);
+        gainNode.connect(analyser);
+
+        isListening = true;
+        micStatus.innerHTML = '🎙️ <span style="color:#05ffa1;font-weight:bold;">Mic active! Blow directly into microphone!</span>';
+        micBtn.style.display = 'none';
+
+        detectBlow();
+      } catch (err) {
+        micStatus.innerHTML = '⚠️ Microphone access denied. Tap candles manually to blow out!';
+      }
+    });
+
+    // Detect blowing sound via Audio Frequency & Amplitude
+    function detectBlow() {
+      if (!isListening) return;
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteFrequencyData(dataArray);
+
+      // Average total sound volume
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        sum += dataArray[i];
+      }
+      const averageVolume = sum / bufferLength;
+
+      // Update volume meter visual
+      const barPercent = Math.min(100, (averageVolume / 100) * 100);
+      volumeBar.style.width = barPercent + '%';
+
+      // Threshold check based on slider value
+      const blowThreshold = parseInt(sensInput.value);
+
+      if (averageVolume > blowThreshold && !candlesBlown) {
+        blowOutCandles();
+      }
+
+      requestAnimationFrame(detectBlow);
+    }
+
+    // Extinguish candles & trigger celebration
+    function blowOutCandles() {
+      candlesBlown = true;
+      
+      flames.forEach((flame, index) => {
+        setTimeout(() => {
+          flame.classList.add('off');
+        }, index * 150);
+      });
+
+      micStatus.innerHTML = '🎉 <span style="color:#ffd166;font-weight:bold;">YAY! Candles blown out! Happy Birthday Ashu!</span> 🎉';
+
+      // Play victory sound & launch confetti
+      playCelebrationSound();
+      triggerConfetti();
+    }
+
+    // Manual click on candles support
+    flames.forEach(flame => {
+      flame.addEventListener('click', blowOutCandles);
+    });
+
+    // Relight candles button
+    relightBtn.addEventListener('click', () => {
+      candlesBlown = false;
+      flames.forEach(flame => flame.classList.remove('off'));
+      micStatus.innerHTML = '🕯️ Candles relit! Blow again into mic!';
+    });
+
+    // Confetti animation
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+
+        setTimeout(() => {
+          confetti({
+            particleCount: 50,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 }
+          });
+          confetti({
+            particleCount: 50,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 }
+          });
+        }, 300);
+      }
+    }
+
+    // Synthesized celebration chime
+    function playCelebrationSound() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const notes = [261.63, 329.63, 392.00, 523.25];
+      
+      notes.forEach((freq, index) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        
+        gain.gain.setValueAtTime(0.1, ctx.currentTime + index * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + index * 0.1 + 0.5);
+        
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        
+        osc.start(ctx.currentTime + index * 0.1);
+        osc.stop(ctx.currentTime + index * 0.1 + 0.5);
+      });
+    }
+  </script>
+</body>
+</html>
